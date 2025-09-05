@@ -15,7 +15,7 @@ public interface QuestionService {
 
      Collection<Question> getAllQuestion();
 
-     Question getRandomQuestion();
+     Collection<Question> getRandomQuestion(int amount);
 
      int getQuestionSetSize();
 

@@ -1,13 +1,11 @@
-package org.grtgb.coursework_2_javacore.controller;
+package org.grtgb.coursework_2_javacore.exception;
 
-import org.grtgb.coursework_2_javacore.exception.ExamError;
-import org.grtgb.coursework_2_javacore.exception.ExamException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class ExamControllerAdvice {
+public class ExamExceptionHandler {
 
     @ExceptionHandler(ExamException.class)
     public ResponseEntity<ExamError> handleExamException(ExamException e) {

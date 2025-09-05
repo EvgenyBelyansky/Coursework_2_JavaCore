@@ -3,20 +3,19 @@ package org.grtgb.coursework_2_javacore.controller;
 import lombok.RequiredArgsConstructor;
 import org.grtgb.coursework_2_javacore.qestion.Question;
 import org.grtgb.coursework_2_javacore.service.ExaminerServiceImpl;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
-@RestController("/exam")
+@RestController
 @RequiredArgsConstructor
+@RequestMapping("/exam")
 public class ExamController {
 
     private final ExaminerServiceImpl examinerService;
 
-    @GetMapping("/get/{amount}")
-    public Collection<Question>getQuestions(@PathVariable Integer amount) {
+    @GetMapping("/get")
+    public Collection<Question>getQuestions(@RequestParam int amount) {
 
         return examinerService.getQuestions(amount);
     }

@@ -2,6 +2,7 @@ package org.grtgb.coursework_2_javacore.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 
 import java.util.Optional;
 
@@ -14,6 +15,12 @@ public abstract class ExamException extends RuntimeException {
     public ExamException(ExamErrorCode code, String message, HttpStatus httpStatus) {
         super(message);
         this.code = code;
-        this.httpStatus = Optional.ofNullable(httpStatus).orElse(HttpStatus.I_AM_A_TEAPOT);
+        this.httpStatus = httpStatus;
+    }
+
+    public ExamException(ExamErrorCode code, String message) {
+        super(message);
+        this.code = code;
+        this.httpStatus = HttpStatus.I_AM_A_TEAPOT;
     }
 }

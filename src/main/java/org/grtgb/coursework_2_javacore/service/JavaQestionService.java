@@ -1,29 +1,25 @@
 package org.grtgb.coursework_2_javacore.service;
 
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.grtgb.coursework_2_javacore.exception.QuestionNotFoundException;
-import org.grtgb.coursework_2_javacore.exception.QuestionSetIsEmptyException;
+import org.grtgb.coursework_2_javacore.exception.*;
 import org.grtgb.coursework_2_javacore.qestion.Question;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-@Getter
 @Service
 public class JavaQestionService implements QuestionService{
 
     private final Set<Question> questionSet;
 
+
+
     @Override
     public void addQuestion(String question, String answer) {
-        if (question.isBlank() || answer.isBlank()) {
-            throw new RuntimeException("Вопрос и ответ должны быть заполнены!!!");
-        }
 
         final Question q = new Question(question, answer);
         addQuestion(q);
@@ -33,6 +29,7 @@ public class JavaQestionService implements QuestionService{
     @Override
     public void addQuestion(Question question) {
         checkQuestionIsNotNull(question);
+        checkQuestionIsNotDouble(question);
 
         questionSet.add(question);
     }
@@ -40,6 +37,7 @@ public class JavaQestionService implements QuestionService{
     @Override
     public void removeQuestion(Question question) {
         checkQuestionIsNotNull(question);
+        checkQuestionSetIsNotFound(question);
 
         questionSet.remove(question);
 
@@ -49,25 +47,28 @@ public class JavaQestionService implements QuestionService{
     public Collection<Question> getAllQuestion() {
         checkQuestionSetIsEmpty();
 
-        return questionSet.stream().toList();
+        return Collections.unmodifiableSet(questionSet);
     }
 
     @Override
-    public Question getRandomQuestion() {
+    public Collection<Question> getRandomQuestion(int amount) {
         checkQuestionSetIsEmpty();
 
-        Question randomQuestion = null;
-
-        Random random = new Random();
-        int randomInt = random.nextInt(questionSet.size());
-
-        Iterator<Question> iterator = questionSet.iterator();
-
-        for (int i = 0; i <= randomInt; i++) {
-            randomQuestion = iterator.next();
+        if (amount <= 0) {
+            return Collections.emptySet();
+        } else if (amount > questionSet.size()) {
+            throw new TooManyRequestedQuestionsExceptions(amount, questionSet.size());
+        } else if (amount == questionSet.size()) {
+            return getAllQuestion();
         }
 
-        return randomQuestion;
+        final List<Question> questionList = new ArrayList<>(questionSet);
+
+        Collections.shuffle(questionList);
+
+        final HashSet<Question> questions = new HashSet<>(questionList.subList(0, amount));
+        return questions;
+
     }
 
     @Override
@@ -81,16 +82,26 @@ public class JavaQestionService implements QuestionService{
 
 
     private void checkQuestionIsNotNull(Question question) {
-        checkQuestionSetIsEmpty();
-
         if (question == null) {
-            throw new QuestionNotFoundException();
+            throw new QuestionIsNullException();
+        }
+    }
+
+    private void checkQuestionIsNotDouble(Question question) {
+        if (questionSet.contains(question)) {
+            throw new QuestionIsDoubleException(question);
         }
     }
 
     private void checkQuestionSetIsEmpty() {
         if (questionSet.isEmpty()) {
             throw new QuestionSetIsEmptyException();
+        }
+    }
+
+    private void checkQuestionSetIsNotFound(Question question) {
+        if (!questionSet.contains(question)) {
+            throw new QuestionNotFoundException(question);
         }
     }
 

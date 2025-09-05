@@ -6,18 +6,19 @@ import org.grtgb.coursework_2_javacore.service.JavaQestionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController("/exam/java")
+import java.util.Collection;
+
+@RestController
 @RequiredArgsConstructor
+@RequestMapping("/exam/java")
 public class JavaQuestionController {
 
     private final JavaQestionService javaQestionService;
 
-    @PostMapping("/new")
-    public ResponseEntity<String> addQuestion(@RequestParam String question,
+    @PostMapping("/add")
+    public void addQuestion(@RequestParam String question,
                                               @RequestParam String answer) {
         javaQestionService.addQuestion(question, answer);
-
-        return ResponseEntity.ok("Вопрос добавлен");
     }
 
     @DeleteMapping("/remove")
@@ -27,13 +28,13 @@ public class JavaQuestionController {
         return ResponseEntity.ok("Вопрос удален");
     }
 
-    @RequestMapping("/all")
-    public void getAllQuestion() {
-        javaQestionService.getAllQuestion();
+    @GetMapping("/all")
+    public Collection<Question> getAllQuestion() {
+        return javaQestionService.getAllQuestion();
     }
 
-    @RequestMapping("/random")
-    public void getRandomQuestion() {
-        javaQestionService.getRandomQuestion();
+    @RequestMapping(value = "/random", method = RequestMethod.GET)
+    public Collection<Question> getRandomQuestion() {
+        return javaQestionService.getRandomQuestion(1);
     }
 }

@@ -1,7 +1,6 @@
 package org.grtgb.coursework_2_javacore.service;
 
 import lombok.RequiredArgsConstructor;
-import org.grtgb.coursework_2_javacore.exception.TooManyRequestedQuestionsExceptions;
 import org.grtgb.coursework_2_javacore.qestion.Question;
 import org.springframework.stereotype.Service;
 
@@ -17,22 +16,18 @@ public class ExaminerServiceImpl implements ExaminerService{
 
 
     @Override
-    public Collection<Question> getQuestions(Integer amount) {
+    public Collection<Question> getQuestions(int amount) {
+        long start = System.currentTimeMillis();
 
         Collection<Question> questions = new HashSet<>();
-        int availableQuestions = questionService.getQuestionSetSize();
 
-        if (amount <= 0) {
-            return questions;
-        } else if (amount > availableQuestions) {
-            throw new TooManyRequestedQuestionsExceptions(amount, availableQuestions);
-        }
+        final Collection<Question> randomQuestion = questionService.getRandomQuestion(amount);
 
 
-        for (int i = 0; i < amount; i++) {
-            questions.add(questionService.getRandomQuestion());
-        }
+        System.out.println(System.currentTimeMillis() - start + "ms.");
+        System.out.println(randomQuestion.size());
 
-        return  questions;
+
+        return randomQuestion;
     }
 }
