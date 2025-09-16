@@ -3,9 +3,11 @@ package org.grtgb.coursework_2_javacore.qestion;
 
 import lombok.*;
 
+import java.util.Objects;
 
-@Data
+
 @NoArgsConstructor
+@Data
 public class Question {
 
     @Setter(value = AccessLevel.PRIVATE)

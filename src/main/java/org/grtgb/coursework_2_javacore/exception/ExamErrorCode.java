@@ -10,5 +10,7 @@ public enum ExamErrorCode {
 
     QUESTION_IS_DOUBLE,
 
-    QUESTION_IS_NULL
+    QUESTION_IS_NULL,
+
+    REQUESTED_ARGUMENT_LESS_ZERO
 }

@@ -1,21 +1,17 @@
 package org.grtgb.coursework_2_javacore.service;
 
-import jakarta.annotation.PostConstruct;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.grtgb.coursework_2_javacore.exception.*;
 import org.grtgb.coursework_2_javacore.qestion.Question;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-public class JavaQestionService implements QuestionService{
+public class JavaQestionService implements QuestionService {
 
     private final Set<Question> questionSet;
-
 
 
     @Override
@@ -37,7 +33,7 @@ public class JavaQestionService implements QuestionService{
     @Override
     public void removeQuestion(Question question) {
         checkQuestionIsNotNull(question);
-        checkQuestionSetIsNotFound(question);
+        checkQuestionNotFoundInSet(question);
 
         questionSet.remove(question);
 
@@ -54,10 +50,10 @@ public class JavaQestionService implements QuestionService{
     public Collection<Question> getRandomQuestion(int amount) {
         checkQuestionSetIsEmpty();
 
-        if (amount <= 0) {
-            return Collections.emptySet();
+        if (amount < 0) {
+            throw new ArgumentLessZeroException(amount, getQuestionSetSize());
         } else if (amount > questionSet.size()) {
-            throw new TooManyRequestedQuestionsExceptions(amount, questionSet.size());
+            throw new TooManyRequestedQuestionsExceptions(amount, getQuestionSetSize());
         } else if (amount == questionSet.size()) {
             return getAllQuestion();
         }
@@ -99,7 +95,7 @@ public class JavaQestionService implements QuestionService{
         }
     }
 
-    private void checkQuestionSetIsNotFound(Question question) {
+    private void checkQuestionNotFoundInSet(Question question) {
         if (!questionSet.contains(question)) {
             throw new QuestionNotFoundException(question);
         }
