@@ -3,6 +3,7 @@ package org.grtgb.coursework_2_javacore.service;
 import lombok.RequiredArgsConstructor;
 import org.grtgb.coursework_2_javacore.exception.*;
 import org.grtgb.coursework_2_javacore.qestion.Question;
+import org.grtgb.coursework_2_javacore.repository.JavaQuestionRepositiry;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -11,7 +12,7 @@ import java.util.*;
 @Service
 public class JavaQestionService implements QuestionService {
 
-    private final Set<Question> questionSet;
+    private final JavaQuestionRepositiry javaQuestionRepositiry;
 
 
     @Override
@@ -27,7 +28,7 @@ public class JavaQestionService implements QuestionService {
         checkQuestionIsNotNull(question);
         checkQuestionIsNotDouble(question);
 
-        questionSet.add(question);
+        javaQuestionRepositiry.addQuestion(question);
     }
 
     @Override
@@ -35,7 +36,7 @@ public class JavaQestionService implements QuestionService {
         checkQuestionIsNotNull(question);
         checkQuestionNotFoundInSet(question);
 
-        questionSet.remove(question);
+        javaQuestionRepositiry.removeQuestion(question);
 
     }
 
@@ -43,7 +44,7 @@ public class JavaQestionService implements QuestionService {
     public Collection<Question> getAllQuestion() {
         checkQuestionSetIsEmpty();
 
-        return Collections.unmodifiableSet(questionSet);
+        return javaQuestionRepositiry.getAll();
     }
 
     @Override
@@ -52,13 +53,13 @@ public class JavaQestionService implements QuestionService {
 
         if (amount < 0) {
             throw new ArgumentLessZeroException(amount, getQuestionSetSize());
-        } else if (amount > questionSet.size()) {
+        } else if (amount > javaQuestionRepositiry.getQuestionSetSize()) {
             throw new TooManyRequestedQuestionsExceptions(amount, getQuestionSetSize());
-        } else if (amount == questionSet.size()) {
+        } else if (amount == javaQuestionRepositiry.getQuestionSetSize()) {
             return getAllQuestion();
         }
 
-        final List<Question> questionList = new ArrayList<>(questionSet);
+        final List<Question> questionList = new ArrayList<>(javaQuestionRepositiry.getAll());
 
         Collections.shuffle(questionList);
 
@@ -69,13 +70,8 @@ public class JavaQestionService implements QuestionService {
 
     @Override
     public int getQuestionSetSize() {
-        checkQuestionSetIsEmpty();
-
-        int size = questionSet.size();
-
-        return size;
+        return javaQuestionRepositiry.getQuestionSetSize();
     }
-
 
     private void checkQuestionIsNotNull(Question question) {
         if (question == null) {
@@ -84,19 +80,19 @@ public class JavaQestionService implements QuestionService {
     }
 
     private void checkQuestionIsNotDouble(Question question) {
-        if (questionSet.contains(question)) {
+        if (javaQuestionRepositiry.getAll().contains(question)) {
             throw new QuestionIsDoubleException(question);
         }
     }
 
     private void checkQuestionSetIsEmpty() {
-        if (questionSet.isEmpty()) {
+        if (javaQuestionRepositiry.getAll().isEmpty()) {
             throw new QuestionSetIsEmptyException();
         }
     }
 
     private void checkQuestionNotFoundInSet(Question question) {
-        if (!questionSet.contains(question)) {
+        if (!javaQuestionRepositiry.getAll().contains(question)) {
             throw new QuestionNotFoundException(question);
         }
     }
